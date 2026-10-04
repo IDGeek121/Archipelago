@@ -23,6 +23,15 @@ ITEM_NAME_TO_ID = {
     "Red Chaos Emerald": 10,
     "White Chaos Emerald": 11,
     "Ring": 12,
+    "Sonic": 13,
+    "Tails": 14,
+    "Knuckles": 15,
+    "Amy": 16,
+    "Robotnik": 17,
+    "Metal Sonic": 18,
+    "Tails Doll": 19,
+    "Metal Knuckles": 20,
+    "Egg Robo": 21,
 }
 
 # Items should have a defined default classification.
@@ -40,6 +49,15 @@ DEFAULT_ITEM_CLASSIFICATIONS = {
     "Red Chaos Emerald": ItemClassification.progression,
     "White Chaos Emerald": ItemClassification.progression,
     "Ring": ItemClassification.filler,
+    "Sonic": ItemClassification.useful,
+    "Tails": ItemClassification.useful,
+    "Knuckles": ItemClassification.useful,
+    "Amy": ItemClassification.useful,
+    "Robotnik": ItemClassification.useful,
+    "Metal Sonic": ItemClassification.useful,
+    "Tails Doll": ItemClassification.useful,
+    "Metal Knuckles": ItemClassification.useful,
+    "Egg Robo": ItemClassification.useful,
 }
 
 
@@ -114,6 +132,24 @@ def create_all_items(world: SonicRWorld) -> None:
         world.create_item("White Chaos Emerald"),
     ]
 
+    characters: list[Item] = [
+        world.create_item("Sonic"),
+        world.create_item("Tails"),
+        world.create_item("Knuckles"),
+        world.create_item("Amy"),
+        world.create_item("Robotnik"),
+        world.create_item("Metal Sonic"),
+        world.create_item("Tails Doll"),
+        world.create_item("Metal Knuckles"),
+        world.create_item("Egg Robo"),
+    ]
+
+    # For determining the starting character
+    starting_character_index = world.random.randint(0, 8)
+    world.push_precollected(characters[starting_character_index])
+    del characters[starting_character_index]
+    itempool += characters
+
     # Archipelago requires that each world submits as many locations as it submits items.
     # This is where we can use our filler and trap items.
     # APQuest has two of these: The Confetti Cannon and the Math Trap.
@@ -171,12 +207,3 @@ def create_all_items(world: SonicRWorld) -> None:
     # This is how the generator actually knows about the existence of our items.
     world.multiworld.itempool += itempool
 
-    # Sometimes, you might want the player to start with certain items already in their inventory.
-    # These items are called "precollected items".
-    # They will be sent as soon as they connect for the first time (depending on your client's item handling flag).
-    # Players can add precollected items themselves via the generic "start_inventory" option.
-    # If you want to add your own precollected items, you can do so via world.push_precollected().
-    #if world.options.start_with_one_confetti_cannon:
-        # We're adding a filler item, but you can also add progression items to the player's precollected inventory.
-        #starting_confetti_cannon = world.create_item("Confetti Cannon")
-        #world.push_precollected(starting_confetti_cannon)
