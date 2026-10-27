@@ -29,13 +29,17 @@ ITEM_NAME_TO_ID = {
     "Tails Doll": 19,
     "Metal Knuckles": 20,
     "Egg Robo": 21,
+    "Resort Island": 22,
+    "Radical City": 23,
+    "Reactive Factory": 24,
+    "Regal Ruin": 25,
 }
 
 DEFAULT_ITEM_CLASSIFICATIONS = {
     "Progressive Resort Island Sonic Token": ItemClassification.progression,
     "Progressive Radical City Sonic Token": ItemClassification.progression,
-    "Progressive Regal Ruin Sonic Token": ItemClassification.progression,
     "Progressive Reactive Factory Sonic Token": ItemClassification.progression,
+    "Progressive Regal Ruin Sonic Token": ItemClassification.progression,
     "Blue Chaos Emerald": ItemClassification.progression,
     "Green Chaos Emerald": ItemClassification.progression,
     "Purple Chaos Emerald": ItemClassification.progression,
@@ -53,6 +57,10 @@ DEFAULT_ITEM_CLASSIFICATIONS = {
     "Tails Doll": ItemClassification.useful,
     "Metal Knuckles": ItemClassification.useful,
     "Egg Robo": ItemClassification.useful,
+    "Resort Island": ItemClassification.progression,
+    "Radical City": ItemClassification.progression,
+    "Reactive Factory": ItemClassification.progression,
+    "Regal Ruin": ItemClassification.progression,
 }
 
 class SonicRItem(Item):
@@ -111,18 +119,38 @@ def create_all_items(world: SonicRWorld) -> None:
         world.create_item("Egg Robo"),
     ]
 
+    courses: list[Item] = [
+        world.create_item("Resort Island"),
+        world.create_item("Radical City"),
+        world.create_item("Reactive Factory"),
+        world.create_item("Regal Ruin"),
+    ]
+
     # For determining the starting character
     starting_character_index = world.random.randint(0, 8)
     world.push_precollected(characters[starting_character_index])
     del characters[starting_character_index]
-    itempool += characters
 
-    number_of_items = len(itempool)
+    starting_course_index = world.random.randint(0, 3)
+    world.push_precollected(courses[starting_course_index])
+    del courses[starting_course_index]
+
+    combined_characters_courses = characters + courses
+
+    number_of_items = len(itempool + combined_characters_courses)
 
     number_of_unfilled_locations = len(world.multiworld.get_unfilled_locations(world.player))
 
     needed_number_of_filler_items = number_of_unfilled_locations - number_of_items
+    if needed_number_of_filler_items >= 0:
+        itempool += [world.create_filler() for _ in range(needed_number_of_filler_items)]
+    else:
+        for _ in range(-needed_number_of_filler_items):
+            index = world.random.randint(0, len(combined_characters_courses) - 1)
+            print("Adding {}", index)
+            world.push_precollected(combined_characters_courses[index])
+            del combined_characters_courses[index]
 
-    itempool += [world.create_filler() for _ in range(needed_number_of_filler_items)]
+    itempool += combined_characters_courses
 
     world.multiworld.itempool += itempool

@@ -28,14 +28,6 @@ class SonicROptions(PerGameCommonOptions):
     difficulty: Difficulty
     weather: Weather
 
-option_groups = [
-    OptionGroup(
-        "Gameplay Options",
-        [Difficulty],
-        [Weather],
-    ),
-]
-
 option_presets = {
     "Speedrunner": {
         "difficulty": 0,
